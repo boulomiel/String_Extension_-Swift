@@ -1,0 +1,96 @@
+//
+//  extension String.swift
+//  Swiich
+//
+//  Created by Ruben Mimoun on 12/09/2021.
+//  Copyright © 2021 עלי חלאחלה. All rights reserved.
+//
+
+import Foundation
+
+extension String {
+    
+    
+    private func dropCharacterUntil(index : Int, copy : String = "" ) -> String{
+            if self.count >= 0 && index != 0 {
+                let toDrop = copy != "" ? copy.dropFirst() :  self.dropFirst()
+                return  dropCharacterUntil(index: index - 1 , copy: String(toDrop))
+            }else{
+                print("dropCharacterUntil", copy)
+                return copy
+            }
+    }
+    
+    private func dropCharacterFrom(index : Int, from text : String) -> String{
+        guard  index < text.count else {
+            return text
+        }
+        var copy = text
+        copy.remove(at: index.index())
+        return dropCharacterFrom(index: index , from: copy)
+    }
+
+    
+    
+    
+    func getTextBetween(firstText : String, secondText: String = "") -> String{
+            let indexUntil = getFirstIndex(for: firstText) +  firstText.count
+            let text = dropCharacterUntil(index: indexUntil)
+            if secondText != "" {
+                let indexFrom =  getFirstIndex(for: secondText, in: text)
+                let received =  text.dropCharacterFrom(index: indexFrom , from : text)
+                print("getTextBetween", received)
+                return received
+            }else{
+                print("getTextBetween", text)
+                return text
+            }
+            
+    }
+
+    private func getFirstIndex(for text : String , in textFrom : String = "") -> Int{
+        let copy =  text
+        let arr =  copy.toArray()
+        if let firstIndex =  textFrom == "" ? self.firstIndex(of: arr[0]) : textFrom.firstIndex(of: arr[0]) {
+            if isUnique(char: arr[0], in: self){
+                let value = firstIndex.utf16Offset(in: self)
+                return value
+            }else{
+                if let lastIndex = self.lastIndex(of: arr[0]){
+                    return lastIndex.utf16Offset(in: self)
+                }
+            }
+   
+        }
+        return 0
+     }
+    
+     
+    
+    
+    private func isUnique(char : Character, in text : String) -> Bool{
+        if text.contains(char){
+            if let index =  text.firstIndex(of: char){
+                var copy =  text
+                copy.remove(at: index)
+                if copy.contains(char){
+                    return false
+                }else{
+                    return true
+                }
+            }
+            
+        }
+        return false
+    }
+    
+
+    func toArray() -> [Character]{
+        var arr : [Character] = []
+        self.forEach{ s in
+            arr.append(s)
+        }
+        return arr
+    }
+    
+}
